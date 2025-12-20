@@ -22,7 +22,7 @@
 </header>
 
 <main>
-    % include
+    {{!base}}
 </main>
 
 </body>
