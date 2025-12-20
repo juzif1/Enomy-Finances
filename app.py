@@ -70,6 +70,43 @@ def currency_conversion():
             return template('result', message="An error occurred during conversion.")
     return template('currency')
 
+@app.route('/investment', method=['GET', 'POST'])
+def investment_calculator():
+    if request.method == 'POST':
+        try:
+            investment_type = request.forms.get('investment_type')
+            lump_sum = float(request.forms.get('lump_sum', 0))
+            monthly = float(request.forms.get('monthly_investment', 0))
+            years = int(request.forms.get('years', 1))
+
+            if investment_type == 'Basic Savings Plan':
+                min_return = lump_sum + (monthly * 12 * years) * 1.012
+                max_return = lump_sum + (monthly * 12 * years) * 1.024
+            elif investment_type == 'Savings Plan Plus':
+                min_return = lump_sum + (monthly * 12 * years) * 1.03
+                max_return = lump_sum + (monthly * 12 * years) * 1.055
+            elif investment_type == 'Managed Stock Investments':
+                min_return = lump_sum + (monthly * 12 * years) * 1.04
+                max_return = lump_sum + (monthly * 12 * years) * 1.23
+            else:
+                return template('result', message="Invalid investment type.")
+
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(
+                "INSERT INTO investment_quotes (investment_type, min_return, max_return, created_at) VALUES (%s,%s,%s,%s)",
+                (investment_type, min_return, max_return, datetime.now())
+            )
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            return template('result', message=f"Projected Return: Min: £{min_return:.2f}, Max: £{max_return:.2f}")
+        except Exception as e:
+            log_error(str(e))
+            return template('result', message="An error occurred during investment calculation.")
+    return template('investment')
+
 # Calculate fee
 def calculate_fee(amount):
     if amount <= 500:
