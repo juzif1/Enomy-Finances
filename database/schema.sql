@@ -1,33 +1,54 @@
-CREATE TABLE IF NOT EXISTS users (
-    user_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS transactions (
-    transaction_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    source_currency VARCHAR(3) NOT NULL,
-    target_currency VARCHAR(3) NOT NULL,
-    amount NUMERIC NOT NULL,
-    fee NUMERIC NOT NULL,
-    result NUMERIC NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER
+        REFERENCES users(id)
+        ON DELETE SET NULL,
+    source_currency CHAR(3) NOT NULL,
+    target_currency CHAR(3) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    fee NUMERIC(10,2) NOT NULL,
+    result NUMERIC(12,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS investment_quotes (
-    quote_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+
+CREATE TABLE investment_quotes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER
+        REFERENCES users(id)
+        ON DELETE SET NULL,
     investment_type VARCHAR(50) NOT NULL,
-    min_return NUMERIC NOT NULL,
-    max_return NUMERIC NOT NULL,
-    total_fees NUMERIC NOT NULL DEFAULT 0,
-    total_tax NUMERIC NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    years INTEGER NOT NULL,
+
+    min_value NUMERIC(14,2) NOT NULL,
+    max_value NUMERIC(14,2) NOT NULL,
+
+    profit_min NUMERIC(14,2) NOT NULL,
+    profit_max NUMERIC(14,2) NOT NULL,
+
+    fees NUMERIC(14,2) NOT NULL,
+
+    tax_min NUMERIC(14,2) NOT NULL,
+    tax_max NUMERIC(14,2) NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS error_logs (
-    log_id SERIAL PRIMARY KEY,
+
+
+CREATE TABLE error_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER
+        REFERENCES users(id)
+        ON DELETE SET NULL,
     error_message TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
