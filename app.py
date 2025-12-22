@@ -264,5 +264,6 @@ def error500(err):
 
 
 if __name__ == '__main__':
+    print("The live exchange rates are:")
     print(get_exchange_rates())  # Test exchange rate fetching
     run(app, host='localhost', port=8080, debug=True)

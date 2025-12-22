@@ -7,7 +7,7 @@ from bottle import request
 _sessions = {}
 
 def hash_password(password: str) -> str:
-    salt = "niemandx_salt"
+    salt = "juzif_salt"
     return hashlib.sha256((password + salt).encode()).hexdigest()
 
 def login_user(user_id: int):
