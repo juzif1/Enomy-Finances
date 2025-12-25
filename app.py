@@ -6,10 +6,10 @@ import psycopg2
 from bottle import (Bottle, error, redirect, request, response, run,
                     static_file, template)
 
-from auth import get_current_user, hash_password, login_user, logout_user
+from utils.auth import get_current_user, hash_password, login_user, logout_user
 from config import DB_CONFIG
-from currency import get_exchange_rates
-from investments import calculate
+from utils.currency import get_exchange_rates
+from utils.investments import calculate
 
 app = Bottle()
 
